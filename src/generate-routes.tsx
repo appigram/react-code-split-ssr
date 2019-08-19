@@ -3,7 +3,7 @@ import { matchPath, Redirect, Route, Switch } from 'react-router-dom'
 import Bundle from './bundle'
 
 export interface IJSXModule {
-  default: React.SFC | React.ComponentClass
+  default: React.FC | React.ComponentClass
 }
 
 export interface ISSRRoute {
@@ -32,7 +32,7 @@ const generateRoutes = async (
     routes: [],
     redirects: [],
   },
-): Promise<React.SFC> => {
+): Promise<React.FC> => {
   if (!Array.isArray(options.routes) || options.routes.length === 0) {
     throw new Error('options.routes must be an non-empty array')
   }
@@ -53,7 +53,7 @@ const generateRoutes = async (
     ? await options.notFoundComp().props.mod
     : await preload.component().props.mod
 
-  const renderComp = (path: string, bundle: React.SFC) => {
+  const renderComp = (path: string, bundle: React.FC) => {
     if (!preloadedComp) return bundle
     const isSSR = (preload && preload.path === path) || (!preload && !path)
     return isSSR ? preloadedComp.default : bundle

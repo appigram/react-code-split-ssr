@@ -2,7 +2,7 @@ import * as React from 'react'
 
 export interface IProps {
   mod: Promise<any>
-  loading?: React.SFC | React.ComponentClass
+  loading?: React.FC | React.ComponentClass
 }
 
 export interface IState {
