@@ -1,6 +1,6 @@
 {
   "name": "@appigram/react-code-split-ssr",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React code splitting with SSR",
   "main": "./lib/index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/react": "^16.9.2",
+    "@types/react-router-dom": "^4.3.4",
     "tslint": "^5.18.0",
     "tslint-react": "^4.0.0",
     "typescript": "^3.5.3"
