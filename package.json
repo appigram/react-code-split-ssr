@@ -1,6 +1,6 @@
 {
   "name": "@appigram/react-code-split-ssr",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "React code splitting with SSR",
   "main": "./lib/index.js",
   "scripts": {
