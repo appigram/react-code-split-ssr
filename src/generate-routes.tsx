@@ -42,8 +42,8 @@ const generateRoutes = async (
   }
 
   const preload = options.routes.find((route) =>
-    !!matchPath(decodeURI(options.pathname), {
-      path: decodeURI(route.path),
+    !!matchPath(options.pathname, {
+      path: route.path,
       exact: route.exact || false,
       strict: route.strict || false,
     }),
@@ -63,7 +63,7 @@ const generateRoutes = async (
     return (
       <Switch>
         {options.routes.map((props, i) => (
-          <Route key={i} {...props} component={renderComp(decodeURI(props.path), props.component)} />
+          <Route key={i} {...props} component={renderComp(props.path, props.component)} />
         ))}
         {options.redirects.map((props, i) => (
           <Redirect key={i} {...props} />
