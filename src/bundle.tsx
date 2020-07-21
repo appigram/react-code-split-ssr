@@ -2,26 +2,27 @@ import * as React from 'react'
 
 export interface IProps {
   mod: Promise<any>
-  loading?: React.FC | React.ComponentClass
+  loading?: React.FC
 }
 
 export interface IState {
   mod: JSX.Element
 }
 
-class Bundle extends React.Component<IProps, IState> {
-  public state = { mod: null }
+const Bundle = ({ mod, loading }: IProps) => {
+  const [ state, setState ] = React.useState({ mod: null })
 
-  public async componentWillMount() {
-    const mod = await this.props.mod
-    this.setState({ mod: mod.default })
-  }
+  React.useEffect(() => {
+    const getMod = async () => {
+      const Mod = await mod
+      setState({ mod: Mod.default })
+    }
+    getMod()
+  }, [])
 
-  public render() {
-    const Mod = this.state.mod
-    const Loading = this.props.loading || (() => <div />)
-    return Mod ? <Mod /> : <Loading />
-  }
+  const Mod = state.mod
+  const Loading = loading || (() => <div />)
+  return state.mod ? <Mod /> : <Loading />
 }
 
 export default Bundle
