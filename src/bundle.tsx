@@ -1,4 +1,4 @@
-import * as React from 'react'
+import {useState, useEffect} from 'react'
 
 export interface IProps {
   mod: Promise<any>
@@ -10,9 +10,9 @@ export interface IState {
 }
 
 const Bundle = ({ mod, loading }: IProps) => {
-  const [ state, setState ] = React.useState({ mod: null })
+  const [ state, setState ] = useState({ mod: null })
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getMod = async () => {
       const Mod = await mod
       setState({ mod: Mod.default })

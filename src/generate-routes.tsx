@@ -1,6 +1,6 @@
-import * as React from 'react'
+import {FunctionComponentElement} from 'react'
 import { matchPath, Redirect, Route, Switch } from 'react-router-dom'
-import Bundle from './bundle'
+// import Bundle from './bundle'
 
 export interface IJSXModule {
   default: React.FC | React.ComponentClass
@@ -8,7 +8,7 @@ export interface IJSXModule {
 
 export interface ISSRRoute {
   path: string
-  component: () => React.SFCElement<{ mod: Promise<IJSXModule> }>
+  component: () => FunctionComponentElement<{ mod: Promise<IJSXModule> }>
   exact?: boolean
   strict?: boolean
 }
@@ -23,7 +23,7 @@ export interface IOptions {
   pathname: string
   routes: ISSRRoute[],
   redirects?: IRedirects[],
-  notFoundComp?: () => React.SFCElement<{ mod: Promise<IJSXModule> }>
+  notFoundComp?: () => FunctionComponentElement<{ mod: Promise<IJSXModule> }>
 }
 
 const generateRoutes = async (
