@@ -105,7 +105,10 @@ A function that returns a `Promise` object which can be resolved to React Router
 - redirects  {objects}[] - An array of `<Redirect>` props object
 - notFoundComp {Component} - A React component for 404 Not Found, only accepts `() => <Bundle/>`
 
-## v1.0.0 TODO
+## v1.1.0
+- [x] Upgrade to React-Router v6
+
+## v1.0.0
 - [ ] SSR correctly for redirected routes
 - [X] Change `notFoundComp` to `() => <Bundle />`
 - [ ] Add more argument validations

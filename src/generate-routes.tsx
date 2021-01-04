@@ -1,5 +1,5 @@
 import {FunctionComponentElement} from 'react'
-import { matchPath, Redirect, Route, Switch } from 'react-router-dom'
+import { matchPath, Navigate, Route, Routes } from 'react-router-dom'
 // import Bundle from './bundle'
 
 export interface IJSXModule {
@@ -8,7 +8,7 @@ export interface IJSXModule {
 
 export interface ISSRRoute {
   path: string
-  component: () => FunctionComponentElement<{ mod: Promise<IJSXModule> }>
+  element: () => FunctionComponentElement<{ mod: Promise<IJSXModule> }>
   exact?: boolean
   strict?: boolean
 }
@@ -51,7 +51,7 @@ const generateRoutes = async (
 
   const preloadedComp: IJSXModule = preload === undefined
     ? await options.notFoundComp().props.mod
-    : await preload.component().props.mod
+    : await preload.element().props.mod
 
   const renderComp = (path: string, bundle: React.FC) => {
     if (!preloadedComp) return bundle
@@ -61,15 +61,15 @@ const generateRoutes = async (
 
   return () => {
     return (
-      <Switch>
+      <Routes>
         {options.routes.map((props, i) => (
-          <Route key={i} {...props} component={renderComp(props.path, props.component)} />
+          <Route key={i} {...props} element={renderComp(props.path, props.element)} />
         ))}
         {options.redirects.map((props, i) => (
-          <Redirect key={i} {...props} />
+          <Navigate key={i} {...props} />
         ))}
-        <Route component={renderComp(null, options.notFoundComp)} />
-      </Switch>
+        <Route element={renderComp(null, options.notFoundComp)} />
+      </Routes>
     )
   }
 }
