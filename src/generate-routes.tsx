@@ -42,11 +42,7 @@ const generateRoutes = async (
   }
 
   const preload = options.routes.find((route) =>
-    !!matchPath(options.pathname, {
-      path: route.path,
-      exact: route.exact || false,
-      strict: route.strict || false,
-    }),
+    !!matchPath(options.pathname, route.path)
   )
 
   const preloadedComp: IJSXModule = preload === undefined
