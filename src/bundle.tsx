@@ -13,11 +13,10 @@ const Bundle = ({ mod, loading }: IProps) => {
   const [ state, setState ] = useState({ mod: null })
 
   useEffect(() => {
-    const getMod = async () => {
+    (async function () {
       const Mod = await mod
       setState({ mod: Mod.default })
-    }
-    getMod()
+    })()
   }, [])
 
   const Mod = state.mod

@@ -1,16 +1,14 @@
 import { FunctionComponentElement } from "react";
 import { matchPath, Redirect, Route, Switch } from "react-router-dom";
-import Bundle from "./bundle";
+// import Bundle from './bundle'
 
 export interface IJSXModule {
-	default: React.FC<{}> | null;
+	default: React.FC | React.ComponentClass;
 }
 
 export interface ISSRRoute {
 	path: string;
 	component: () => FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
-	caseSensitive?: boolean;
-	children?: React.ReactNode;
 	exact?: boolean;
 	strict?: boolean;
 }
@@ -44,7 +42,12 @@ const generateRoutes = async (
 	}
 
 	const preload = options.routes.find(
-		(route) => !!matchPath(options.pathname, route.path)
+		(route) =>
+			!!matchPath(options.pathname, {
+				path: route.path,
+				exact: route.exact || false,
+				strict: route.strict || false,
+			})
 	);
 
 	const preloadedComp: IJSXModule =
