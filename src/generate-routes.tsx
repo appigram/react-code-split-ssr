@@ -1,5 +1,4 @@
-import { FunctionComponentElement } from "react";
-import { matchPath, Redirect, Route, Switch } from "react-router-dom";
+import { matchPath, Route, Routes } from "react-router-dom";
 // import Bundle from './bundle'
 
 export interface IJSXModule {
@@ -7,75 +6,57 @@ export interface IJSXModule {
 }
 
 export interface ISSRRoute {
-	path: string;
-	component: () => FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
-	exact?: boolean;
-	strict?: boolean;
-}
-
-export interface IRedirects {
-	from: string;
-	to: string | object;
-	push?: boolean;
+	caseSensitive?: boolean;
+  children?: React.ReactNode;
+  element?: React.ReactElement | null;
+  index?: boolean;
+  path?: string;
 }
 
 export interface IOptions {
 	pathname: string;
 	routes: ISSRRoute[];
-	redirects?: IRedirects[];
-	notFoundComp?: () => FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
+	notFoundComp?: React.ReactElement | null;
 }
 
 const generateRoutes = async (
 	options: IOptions = {
 		pathname: "/",
-		routes: [],
-		redirects: [],
+		routes: []
 	}
 ): Promise<React.FC> => {
 	if (!Array.isArray(options.routes) || options.routes.length === 0) {
 		throw new Error("options.routes must be an non-empty array");
 	}
 
-	if (!Array.isArray(options.redirects)) {
-		throw new Error("options.redirects must be an array");
-	}
-
 	const preload = options.routes.find(
 		(route) =>
-			!!matchPath(options.pathname, {
-				path: route.path,
-				exact: route.exact || false,
-				strict: route.strict || false,
-			})
+			!!matchPath(route.path, options.pathname)
 	);
 
-	const preloadedComp: IJSXModule =
+	const preloadedComp: React.ReactElement =
 		preload === undefined
-			? await options.notFoundComp().props.mod
-			: await preload.component().props.mod;
+			? await options.notFoundComp
+			: await preload.element;
 
-	const renderComp = (path: string, bundle: React.FC) => {
+	const renderComp = (path: string, bundle: React.ReactElement) => {
 		if (!preloadedComp) return bundle;
 		const isSSR = (preload && preload.path === path) || (!preload && !path);
-		return isSSR ? preloadedComp.default : bundle;
+		return isSSR ? preloadedComp : bundle;
 	};
 
 	return () => {
 		return (
-			<Switch>
+			<Routes>
 				{options.routes.map((props, i) => (
 					<Route
 						key={i}
 						{...props}
-						component={renderComp(props.path, props.component)}
+						element={renderComp(props.path, props.element)}
 					/>
 				))}
-				{options.redirects.map((props, i) => (
-					<Redirect key={i} {...props} />
-				))}
-				<Route component={renderComp(null, options.notFoundComp)} />
-			</Switch>
+				<Route element={renderComp(null, options.notFoundComp)} />
+			</Routes>
 		);
 	};
 };
