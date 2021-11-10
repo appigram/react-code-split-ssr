@@ -25,7 +25,7 @@ const generateRoutes = async (
 		pathname: "/",
 		routes: []
 	}
-): Promise<React.FC> => {
+): Promise<ReactElement<any, string | JSXElementConstructor<any>>> => {
 	if (!Array.isArray(options.routes) || options.routes.length === 0) {
 		throw new Error("options.routes must be an non-empty array");
 	}
@@ -46,20 +46,20 @@ const generateRoutes = async (
 		return isSSR ? preloadedComp : bundle;
 	};
 
-	return () => {
-		return (
-			<Routes>
-				{options.routes.map((props, i) => (
+	return (
+		<Routes>
+			{options.routes.map((props, i) => {
+				const element = renderComp(props.path, props.element)
+				return (
 					<Route
 						key={i}
 						{...props}
-						element={renderComp(props.path, props.element)}
+						element={element}
 					/>
-				))}
-				<Route element={renderComp(null, options.notFoundComp)} />
-			</Routes>
-		);
-	};
+			)})}
+			<Route element={renderComp(null, options.notFoundComp)} />
+		</Routes>
+	);
 };
 
 export default generateRoutes;
