@@ -1,14 +1,15 @@
+import { ReactElement, JSXElementConstructor } from 'react'
 import { matchPath, Route, Routes } from "react-router-dom";
 // import Bundle from './bundle'
 
 export interface IJSXModule {
-	default: React.FC | React.ComponentClass;
+	default: ReactElement<any, string | JSXElementConstructor<any>>;
 }
 
 export interface ISSRRoute {
 	caseSensitive?: boolean;
   children?: React.ReactNode;
-  element?: React.ReactElement | null;
+  element?: () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
   index?: boolean;
   path?: string;
 }
@@ -16,7 +17,7 @@ export interface ISSRRoute {
 export interface IOptions {
 	pathname: string;
 	routes: ISSRRoute[];
-	notFoundComp?: React.ReactElement | null;
+	notFoundComp?: () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
 }
 
 const generateRoutes = async (
@@ -34,12 +35,12 @@ const generateRoutes = async (
 			!!matchPath(route.path, options.pathname)
 	);
 
-	const preloadedComp: React.ReactElement =
+	const preloadedComp: any =
 		preload === undefined
-			? await options.notFoundComp
-			: await preload.element;
+			? await options.notFoundComp().props.mod
+			: await preload.element().props.mod;
 
-	const renderComp = (path: string, bundle: React.ReactElement) => {
+	const renderComp = (path: string, bundle: React.FC) => {
 		if (!preloadedComp) return bundle;
 		const isSSR = (preload && preload.path === path) || (!preload && !path);
 		return isSSR ? preloadedComp : bundle;
