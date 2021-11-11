@@ -5,10 +5,6 @@ export interface IProps {
   loading?: React.FC
 }
 
-export interface IState {
-  mod: JSX.Element
-}
-
 const Bundle = ({ mod, loading }: IProps) => {
   const [ state, setState ] = useState({ mod: null })
 
