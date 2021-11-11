@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ReactElement } from "react";
 import { matchPath, Route, Routes } from "react-router-dom";
 
 export interface IJSXModule {
@@ -7,26 +7,22 @@ export interface IJSXModule {
 
 export interface ISSRRoute {
 	caseSensitive?: boolean;
-  children?: React.ReactNode;
-  element?: ReactElement;
-  index?: boolean;
-  path?: string;
+	children?: React.ReactNode;
+	element?: () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
+	index?: boolean;
+	path?: string;
 }
 
 export interface IOptions {
 	pathname: string;
 	routes: ISSRRoute[];
-}
-
-export interface IRenderElement {
-	path: string;
-	bundle: ReactElement;
+	notFoundComp?: () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
 }
 
 const generateRoutes = async (
 	options: IOptions = {
 		pathname: "/",
-		routes: []
+		routes: [],
 	}
 ): Promise<React.FC> => {
 	if (!Array.isArray(options.routes) || options.routes.length === 0) {
@@ -34,17 +30,19 @@ const generateRoutes = async (
 	}
 
 	const preload = options.routes.find(
-		(route) =>
-			!!matchPath(route.path, options.pathname)
+		(route) => !!matchPath(route.path, options.pathname)
 	);
 
-	const preloadedComp: any = await preload.element.props.mod;
+	const preloadedComp: any =
+		preload === undefined
+			? await options.notFoundComp().props.mod
+			: await preload.element().props.mod;
 
-	const renderElement = ({path , bundle }: IRenderElement) => {
+	const renderElement = (path: string, bundle: ReactElement) => {
 		if (!preloadedComp) return bundle;
 		const isSSR = (preload && preload.path === path) || (!preload && !path);
 		const Element = isSSR ? preloadedComp.default : bundle;
-		return <Element />
+		return <Element />;
 	};
 
 	return () => {
@@ -55,12 +53,14 @@ const generateRoutes = async (
 						<Route
 							key={i}
 							path={props.path}
-							element={renderElement({ path: props.path, bundle: props.element})}
+							element={renderElement(props.path, props.element())}
 						/>
-				)})}
+					);
+				})}
+				<Route element={renderElement(null, options.notFoundComp())} />
 			</Routes>
 		);
-	}
+	};
 };
 
 export default generateRoutes;
