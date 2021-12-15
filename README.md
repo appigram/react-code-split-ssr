@@ -3,7 +3,7 @@ React code splitting with server side rendering
 
 ## How it works
 
-- Based on React Router 4
+- Based on React Router 6
 - Server side: Load all components synchronously, then render to string.
 - Client side: Load the initial component before rendering, render the entire screen synchronously, then load the rest of routes asynchronously.
 
@@ -26,9 +26,6 @@ export const routes = [
   { exact: true, path: '/posts', component: Posts },
 ]
 
-export const redirects = [
-  { from: '/test', to: '/posts' }
-]
 ```
 Client:
 ```js
@@ -104,6 +101,9 @@ A function that returns a `Promise` object which can be resolved to React Router
   - `location`, `render` fields are currently not supported
 - redirects  {objects}[] - An array of `<Redirect>` props object
 - notFoundComp {Component} - A React component for 404 Not Found, only accepts `() => <Bundle/>`
+
+## v1.2.0
+- [x] Remove redirects, Fix React-Router v6 specific rendering
 
 ## v1.1.0
 - [x] Upgrade to React-Router v6
