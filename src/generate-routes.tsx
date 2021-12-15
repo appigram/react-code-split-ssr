@@ -8,7 +8,7 @@ export interface IJSXModule {
 export interface ISSRRoute {
 	caseSensitive?: boolean;
 	children?: React.ReactNode;
-	element?: () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
+	element?: any; // () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
 	index?: boolean;
 	path?: string;
 }
@@ -24,7 +24,7 @@ const generateRoutes = async (
 		pathname: "/",
 		routes: [],
 	}
-): Promise<React.FC> => {
+) => {
 	if (!Array.isArray(options.routes) || options.routes.length === 0) {
 		throw new Error("options.routes must be an non-empty array");
 	}
@@ -40,27 +40,24 @@ const generateRoutes = async (
 
 	const renderElement = (path: string, bundle: ReactElement) => {
 		if (!preloadedComp) return bundle;
-		const isSSR = (preload && preload.path === path) || (!preload && !path);
-		const Element = isSSR ? preloadedComp.default : bundle;
-		return <Element />;
+		const isRouteMatched = (preload && preload.path === path) || (!preload && !path);
+		const Element = isRouteMatched ? preloadedComp.default : bundle;
+		return isRouteMatched ? <Element /> : Element
 	};
 
-	return () => {
-		return (
-			<Routes>
-				{options.routes.map((props, i) => {
-					return (
-						<Route
-							key={i}
-							path={props.path}
-							element={renderElement(props.path, props.element())}
-						/>
-					);
-				})}
-				<Route element={renderElement(null, options.notFoundComp())} />
-			</Routes>
-		);
-	};
+	return (
+		<Routes>
+			{options.routes.map((props, i) => {
+				return (
+					<Route
+						key={i}
+						path={props.path}
+						element={renderElement(props.path, props.element)}
+					/>
+				);
+			})}
+		</Routes>
+	);
 };
 
 export default generateRoutes;
