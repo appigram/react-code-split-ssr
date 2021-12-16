@@ -56,7 +56,7 @@ const generateRoutes = async (
 					/>
 				);
 			})}
-			<Route path='*' element={renderElement(null, options.notFoundComp)} />
+			<Route key='nf' path='*' element={renderElement(null, options.notFoundComp)} />
 		</Routes>
 	);
 };
