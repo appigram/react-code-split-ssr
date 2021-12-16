@@ -16,7 +16,7 @@ export interface ISSRRoute {
 export interface IOptions {
 	pathname: string;
 	routes: ISSRRoute[];
-	notFoundComp?: () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
+	notFoundComp?: any; // () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
 }
 
 const generateRoutes = async (
@@ -56,6 +56,7 @@ const generateRoutes = async (
 					/>
 				);
 			})}
+			<Route path='*' element={renderElement(null, options.notFoundComp)} />
 		</Routes>
 	);
 };
