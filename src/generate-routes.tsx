@@ -47,7 +47,7 @@ const generateRoutes = async (
 
 	return (
 		<Routes>
-			{options.routes.map((props, i) => {
+			{...options.routes.map((props, i) => {
 				return (
 					<Route
 						key={i}
