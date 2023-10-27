@@ -33,10 +33,13 @@ const generateRoutes = async (
 		(route) => !!matchPath(route.path, options.pathname)
 	);
 
-	const preloadedComp: any =
-		preload === undefined
-			? await options.notFoundComp().props.mod
-			: await preload.element().props.mod;
+	const preloadedElement = preload === undefined ? options.notFoundComp : preload.element
+
+	// fallback to previous version
+	const preloadedComp: any = typeof preloadedElement === 'function' ?
+		await preloadedElement().props.mod
+		:
+		await preloadedElement.props.mod
 
 	const renderElement = (path: string, bundle: ReactElement) => {
 		if (!preloadedComp) return bundle;
