@@ -33,19 +33,19 @@ const generateRoutes = async (
 		(route) => !!matchPath(route.path, options.pathname)
 	);
 
-	const preloadedElement = preload === undefined ? options.notFoundComp : preload.element
+	const preloadedElement = preload === undefined ? options.notFoundComp : preload.element;
 
 	// fallback to previous version
 	const preloadedComp: any = typeof preloadedElement === 'function' ?
 		await preloadedElement().props.mod
 		:
-		await preloadedElement.props.mod
+		await preloadedElement.props.mod;
 
 	const renderElement = (path: string, bundle: ReactElement) => {
 		if (!preloadedComp) return bundle;
 		const isRouteMatched = (preload && preload.path === path) || (!preload && !path);
 		const Element = isRouteMatched ? preloadedComp.default : bundle;
-		return isRouteMatched ? <Element /> : Element
+		return isRouteMatched ? <Element /> : Element;
 	};
 
 	return (
