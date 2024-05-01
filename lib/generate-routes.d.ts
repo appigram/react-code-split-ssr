@@ -1,27 +1,18 @@
-import * as React from 'react';
+import React from "react";
 export interface IJSXModule {
-    default: React.SFC | React.ComponentClass;
+    default: React.FC | React.ComponentClass;
 }
 export interface ISSRRoute {
-    path: string;
-    component: () => React.SFCElement<{
-        mod: Promise<IJSXModule>;
-    }>;
-    exact?: boolean;
-    strict?: boolean;
-}
-export interface IRedirects {
-    from: string;
-    to: string | object;
-    push?: boolean;
+    caseSensitive?: boolean;
+    children?: React.ReactNode;
+    element?: any;
+    index?: boolean;
+    path?: string;
 }
 export interface IOptions {
     pathname: string;
     routes: ISSRRoute[];
-    redirects?: IRedirects[];
-    notFoundComp?: () => React.SFCElement<{
-        mod: Promise<IJSXModule>;
-    }>;
+    notFoundComp?: any;
 }
-declare const generateRoutes: (options?: IOptions) => Promise<any>;
+declare const generateRoutes: (options?: IOptions) => Promise<import("react/jsx-runtime").JSX.Element>;
 export default generateRoutes;
