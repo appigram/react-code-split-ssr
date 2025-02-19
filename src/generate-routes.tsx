@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { matchPath, Route, Routes } from "react-router-dom";
+import { matchPath, Route, Routes } from "react-router";
 
 export interface IJSXModule {
 	default: React.FC | React.ComponentClass;

@@ -1,4 +1,3 @@
-/// <reference types="react" />
 export interface IProps {
     mod: Promise<any>;
     loading?: React.FC;
