@@ -5,8 +5,12 @@ export interface IProps {
   loading?: React.FC;
 }
 
+type BundleState = {
+  mod: React.FC | React.ComponentClass | null;
+};
+
 const Bundle = ({ mod, loading }: IProps) => {
-  const [state, setState] = useState({ mod: null });
+  const [state, setState] = useState<BundleState>({ mod: null });
 
   useEffect(() => {
     (async function () {
@@ -17,7 +21,8 @@ const Bundle = ({ mod, loading }: IProps) => {
 
   const Mod = state.mod;
   const Loading = loading || (() => <div />);
-  return state.mod ? <Mod /> : <Loading />;
+
+  return Mod ? <Mod /> : <Loading />;
 };
 
 export default Bundle;

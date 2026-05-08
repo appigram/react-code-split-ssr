@@ -1,3 +1,4 @@
+import React from "react";
 export interface IJSXModule {
     default: React.FC | React.ComponentClass;
 }

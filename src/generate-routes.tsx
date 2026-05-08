@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { matchPath, Route, Routes } from "react-router";
 
 export interface IJSXModule {
@@ -8,7 +8,7 @@ export interface IJSXModule {
 export interface ISSRRoute {
 	caseSensitive?: boolean;
 	children?: React.ReactNode;
-	element?: any; // () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
+	element?: any;
 	index?: boolean;
 	path?: string;
 }
@@ -16,7 +16,7 @@ export interface ISSRRoute {
 export interface IOptions {
 	pathname: string;
 	routes: ISSRRoute[];
-	notFoundComp?: any; // () => React.FunctionComponentElement<{ mod: Promise<IJSXModule> }>;
+	notFoundComp?: any;
 }
 
 const generateRoutes = async (
@@ -30,35 +30,31 @@ const generateRoutes = async (
 	}
 
 	const preload = options.routes.find(
-		(route) => !!matchPath(route.path, options.pathname)
+		(route): route is ISSRRoute & { path: string; } => !!route.path && !!matchPath(route.path, options.pathname)
 	);
 
 	const preloadedElement = preload === undefined ? options.notFoundComp : preload.element;
 
-	// fallback to previous version
-	const preloadedComp: any = typeof preloadedElement === 'function' ?
-		await preloadedElement().props.mod
-		:
-		await preloadedElement.props.mod;
+	const preloadedComp: IJSXModule | null = typeof preloadedElement === 'function'
+		? await preloadedElement().props.mod
+		: await preloadedElement?.props?.mod ?? null;
 
-	const renderElement = (path: string, bundle: ReactElement) => {
+	const renderElement = (path: string | null, bundle: ReactElement) => {
 		if (!preloadedComp) return bundle;
 		const isRouteMatched = (preload && preload.path === path) || (!preload && !path);
-		const Element = isRouteMatched ? preloadedComp.default : bundle;
-		return isRouteMatched ? <Element /> : Element;
+		const Element = isRouteMatched ? preloadedComp.default : null;
+		return isRouteMatched && Element ? <Element /> : bundle;
 	};
 
 	return (
 		<Routes>
-			{options.routes.map((props, i) => {
-				return (
-					<Route
-						key={i}
-						path={props.path}
-						element={renderElement(props.path, props.element)}
-					/>
-				);
-			})}
+			{options.routes.map((props, i) => (
+				<Route
+					key={i}
+					path={props.path}
+					element={renderElement(props.path ?? null, props.element)}
+				/>
+			))}
 			<Route key='nf' path='*' element={renderElement(null, options.notFoundComp)} />
 		</Routes>
 	);
