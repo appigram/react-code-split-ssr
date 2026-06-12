@@ -13,5 +13,5 @@ export interface IOptions {
     routes: ISSRRoute[];
     notFoundComp?: any;
 }
-declare const generateRoutes: (options?: IOptions) => Promise<import("react/jsx-runtime").JSX.Element>;
+declare const generateRoutes: (options?: IOptions) => Promise<import("react").JSX.Element>;
 export default generateRoutes;
